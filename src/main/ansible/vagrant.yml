@@ -1,0 +1,31 @@
+- hosts: test
+  become: yes
+  tasks:
+
+    - name: Install dependencies
+      yum:
+        name: "{{ item }}"
+      with_items:
+        - java-1.8.0-openjdk
+        - lsof
+
+    - name: Create install dir
+      file:
+        path: "/opt/apache.org"
+        state: directory
+
+    - name: Download SOLR package
+      get_url:
+        url: "http://mirrors.supportex.net/apache/lucene/solr/6.6.0/solr-6.6.0.tgz"
+        dest: "/home/vagrant/"
+        timeout: 120
+
+    - name: Unpack SOLR
+      unarchive:
+        src: "/home/vagrant/solr-6.6.0.tgz"
+        remote_src: True
+        dest: "/opt/apache.org/"
+
+# TODO: chown to SOLR user
+# TODO: example data to index
+# TODO (LATER): create rpm package for solr binaries.
